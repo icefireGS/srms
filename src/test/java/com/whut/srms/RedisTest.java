@@ -41,12 +41,12 @@ public class RedisTest {
         BoundHashOperations<String, Object, Object> hashOps =
                 this.redisTemplate.boundHashOps("user");
         // 操作hash数据
-        hashOps.put("name", "jack");
+        hashOps.put("username", "jack");
         hashOps.put("age", "21");
 
         // 获取单个数据
-        Object name = hashOps.get("name");
-        System.out.println("name = " + name);
+        Object name = hashOps.get("username");
+        System.out.println("username = " + name);
 
         // 获取所有数据
         Map<Object, Object> map = hashOps.entries();

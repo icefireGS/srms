@@ -3,13 +3,13 @@ package com.whut.srms.service;
 import com.whut.srms.mapper.UserMapper;
 import com.whut.srms.pojo.User;
 import com.whut.srms.property.SmsProperties;
-import com.whut.srms.utils.CodecUtils;
 import com.whut.srms.utils.NumberUtils;
 import com.whut.srms.utils.SmsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -30,6 +30,9 @@ public class UserService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     static final String KEY_PREFIX = "user:code:phone:";
 
     static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -38,7 +41,7 @@ public class UserService {
         User record = new User();
         switch (type) {
             case 1:
-                record.setName(data);
+                record.setUsername(data);
                 break;
             case 2:
                 record.setPhone(data);
@@ -79,11 +82,10 @@ public class UserService {
         user.setType(0);
         user.setIntro("这个人很懒，什么都没写~");
         user.setImg(null);
-        // 生成盐
-        String salt = CodecUtils.generateSalt();
-        user.setSalt(salt);
+        user.setSize((long) 0);
+        user.setMax_size((long) 1073741824);  //1GB
         // 对密码进行加密
-        user.setPwd(CodecUtils.md5Hex(user.getPwd(), salt));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         // 写入数据库
         boolean boo = this.userMapper.insertSelective(user) == 1;
 
@@ -98,20 +100,15 @@ public class UserService {
         return boo;
     }
 
-    public User queryUser(String name, String pwd) {
+    public User queryUser(String username) {
         // 查询
         User record = new User();
-        record.setName(name);
+        record.setUsername(username);
         User user = this.userMapper.selectOne(record);
         // 校验用户名
         if (user == null) {
             return null;
         }
-        // 校验密码
-        if (!user.getPwd().equals(CodecUtils.md5Hex(pwd, user.getSalt()))) {
-            return null;
-        }
-        // 用户名密码都正确
         return user;
     }
 }

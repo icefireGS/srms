@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class UserController {
@@ -17,8 +19,8 @@ public class UserController {
 
     /**
      * 校验数据是否可用
-     * @param data
-     * @param type
+     * @param data;
+     * @param type;
      * @return
      */
     @GetMapping("check/{data}/{type}")
@@ -32,7 +34,7 @@ public class UserController {
 
     /**
      * 发送手机验证码
-     * @param phone
+     * @param phone;
      * @return
      */
     @PostMapping("code")
@@ -46,8 +48,8 @@ public class UserController {
 
     /**
      * 注册
-     * @param user
-     * @param code
+     * @param user;
+     * @param code;
      * @return
      */
     @PostMapping("register")
@@ -60,20 +62,28 @@ public class UserController {
     }
 
     /**
-     * 根据用户名和密码查询用户
-     * @param name
-     * @param pwd
+     * 根据用户名查询用户
+     * @param username;
      * @return
      */
     @PostMapping("query")
     public ResponseEntity<User> queryUser(
-            @RequestParam("name") String name,
-            @RequestParam("pwd") String pwd
+            @RequestParam("username") String username
     ) {
-        User user = this.userService.queryUser(name, pwd);
+        User user = this.userService.queryUser(username);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * 验证请求
+     */
+    @GetMapping("verify")
+    public ResponseEntity<Map<String, String>> Verify() {
+        Map<String, String> result = new HashMap<>();
+        result.put("message", "验证成功!");
+        return ResponseEntity.ok(result);
     }
 }
