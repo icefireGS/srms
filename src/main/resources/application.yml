@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${srms.baseUrl}:3306/stup
+    username: #用户名
+    password: #密码
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      max-lifetime: 120000
+  redis:
+    host: ${srms.otherUrl}
+  servlet:
+    multipart:
+      max-file-size: 50MB # 限制文件上传的大小
+      max-request-size: 150MB  # 限制总上传数据大小
+  data:
+    elasticsearch:
+      cluster-name: srms-cluster
+      cluster-nodes: ${srms.otherUrl}:9300
+  jackson:
+    default-property-inclusion: non_null # 配置json处理时忽略空值
+  main:
+    allow-bean-definition-overriding: true
+
+srms:
+  sms:
+    accessKeyId:  # 你自己的accessKeyId
+    accessKeySecret:  # 你自己的AccessKeySecret
+    signName:  # 签名名称
+    verifyCodeTemplate:  # 模板名称
+  baseUrl: 127.0.0.1
+  otherUrl: #服务器2地址
+  user:
+    max-version-num: 10   #用户最大历史文件数
+  custominfoheader:
+    ErrorHeader: SRMS_ERROR  #错误信息头
+  urlheader:
+    tracker1: #tracker1地址
+    tracker1-group-name: group1
+    tracker2: #tracker2地址
+    tracker2-group-name: group2
+
+fdfs:
+  so-timeout: 1501
+  connect-timeout: 601
+  thumb-image: # 缩略图
+    width: 60
+    height: 60
+  tracker-list: # tracker地址
+    - ${srms.urlheader.tracker1}:22122
+    - ${srms.urlheader.tracker2}:22122
