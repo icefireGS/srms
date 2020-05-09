@@ -57,10 +57,10 @@ public class UserService {
         String code = NumberUtils.generateCode(6);
         try {
             // 发送短信
-            //调用工具发送短信
-            this.smsUtils.sendSms(phone, code, smsProperties.getSignName(), smsProperties.getVerifyCodeTemplate());
             // 将code存入redis
             this.redisTemplate.opsForValue().set(KEY_PREFIX + phone, code, 5, TimeUnit.MINUTES);
+            //调用工具发送短信
+            this.smsUtils.sendSms(phone, code, smsProperties.getSignName(), smsProperties.getVerifyCodeTemplate());
             return true;
         } catch (Exception e) {
             logger.error("发送短信失败。phone：{}， code：{}", phone, code);
